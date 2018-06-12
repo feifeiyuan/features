@@ -5,7 +5,7 @@
 #include <unistd.h>  
 #include <sys/time.h>  
   
-#include "sgm.h"  
+#include "cpu_loading.h"  
   
 static void debug_cpufreq_count(u8 cpu_size,  ui *cpu_available_freq)  
 {  
