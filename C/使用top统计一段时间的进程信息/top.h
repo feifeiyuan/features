@@ -13,7 +13,7 @@ typedef struct top_heap  * top_tree;
 #define FAILED_OPEN_FILE    -2  
 #define ERROR				-22
 
-#define DEFAULT_TIME		30
+#define DEFAULT_TIME		10
 #define DEFAULT_NUM			10
 
 #define TOP_DIR				"/sdcard/top"

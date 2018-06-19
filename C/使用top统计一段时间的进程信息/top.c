@@ -356,7 +356,7 @@ int main(int argc, char *argv[])
 	if(get_processor_num(&cpu_index, &arg_index, &pid_index)<0){
 		return ERROR;
 	}
-	printf("%d\t%d\t%d\n", pid_index, cpu_index, arg_index);
+	//printf("%d\t%d\t%d\n", pid_index, cpu_index, arg_index);
 	
 	
 	if(deal_statistic(cpu_index, arg_index, pid_index, num)<0){
