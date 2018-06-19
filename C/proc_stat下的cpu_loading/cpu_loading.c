@@ -348,15 +348,20 @@ static si check_argv(si *interval, char *tag, si *accummulate_time, char *value)
 static si get_processor_num()
 {
 	FILE *file_process = NULL;
-	si core_num = 0;
-	file_process = popen("cat /proc/cpuinfo| grep \"processor\"| wc -l","r");
+	char buffer[BUFFER_SIZE];
+	s8 cpu_num = 0;
+	file_process = fopen("/proc/cpuinfo","r");
 	if(file_process==NULL){
-		fprintf(stderr, "%s:failed run commond\n", __func__, "/proc/cpuinfo| grep \"processor\"| wc -l");  
+		fprintf(stderr, "%s:failed run commond\n", __func__, "/proc/cpuinfo");  
         return FAILED_OPEN_FILE; 
 	}
-	fscanf(file_process, "%d", &core_num);
+	while(fgets(buffer, BUFFER_SIZE, file_process)!=NULL) {
+		if(strstr(buffer,"processor")!=NULL){
+			cpu_num++;
+		}
+	}
 	fclose(file_process);
-	return core_num;
+	return cpu_num;
 }
 
 static s8 get_init_proc_stat(const char *file_path)
@@ -426,10 +431,13 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "the accummulate time should not more than 1 hour\n");
 		return INVALID_ARGV;
 	}
+
 	processor_num = get_processor_num();
-	if(processor_num<=0)
+	if(processor_num<=0){
+		printf("find cpu core num is not correct\n");
 		return ERROR;
-	//printf("%d\n", processor_num);
+	}
+	
 	
 	if(get_init_freq_count(CPU0_AVAILABLE_FREQ_PATH, &cpu0_size, cpu0_available_freq)<0)
 		return ERROR;
@@ -438,13 +446,14 @@ int main(int argc, char *argv[])
 			return ERROR;
 	} 
 	
+	
 	jeffies_count = get_init_proc_stat(PROC_CPU_STAT);
 	if(jeffies_count<0){
 		return ERROR;
 	}
       
     // debug  
-    // debug_cpufreq_count(cpu0_size, cpu0_available_freq);  
+    //debug_cpufreq_count(cpu0_size, cpu0_available_freq);  
 	// debug_cpufreq_count(cpu4_size, cpu4_available_freq);  
     total_count = (accummulate_time*1000)/interval;  
     clear_envirment();  
@@ -457,6 +466,5 @@ int main(int argc, char *argv[])
 	if(compute_cpu_pcpu_freq(cpu0_size, cpu0_available_freq, cpu4_size,cpu4_available_freq, processor_num,  cluster_little, cluster_big, total_count)<0){
 		return ERROR;
 	}
-  
     return 0;  
 }  
