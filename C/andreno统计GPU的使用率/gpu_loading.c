@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 		return ERROR;
 	printf("polling interval is %d(ms)\n", polling_interval);
 	counts = accummulate_time*1000/polling_interval;
-	printf("counts is %d\n", counts);
+	//printf("counts is %d\n", counts);
 	
 	data_simpling(gpu_available_freq, gpu_freq_utilisation, counts, gpu_size, polling_interval);
 	// debug
