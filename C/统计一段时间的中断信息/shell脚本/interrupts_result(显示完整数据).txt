@@ -1,0 +1,54 @@
+ID             CPU7           CPU6           CPU5           CPU4           CPU3           CPU2           CPU1           CPU0           request_irq    unknown        acpi_sci       dev_name       
+1:             2              13             3              16             47             42             100            212            GICv3          60             Level          r4p0_bcevt_timer    
+2:             3              13             13             82             57             251            571            835            GICv3          30             Edge           arch_timer          
+9:             0              0              0              0              0              0              0              9              GICv3          47             Level          70900000.i2c        
+12:            0              0              0              0              0              0              0              72             GICv3          92             Level          mmc0                
+20:            0              0              0              0              0              0              0              91             GICv3          153            Level          sprd_cpufreqhw      
+53:            0              0              0              0              0              0              0              11             GICv3          101            Level          sprd-mailbox_target 
+56:            0              0              0              0              0              0              0              1              GICv3          70             Level          spi5.0              
+57:            0              0              0              0              0              0              0              1              spi5.0         7              Edge           chg_timer           
+IPI0:          0              0              10             47             9              165            178            234            Rescheduling   interrupts          
+IPI1:          0              0              0              1              1              1              1              0              Function       call           interrupts          
+IPI3:          1              0              0              3              0              2              3              5              Timer          broadcast      interrupts          
+IPI4:          0              0              0              8              0              7              33             40             IRQ            work           interrupts          
+
+3:             0              0              0              0              0              0              0              0              GICv3          26             Edge           arch_timer          
+5:             0              0              0              0              0              0              0              0              GICv3          35             Level          sprd_serial1        
+6:             0              0              0              0              0              0              0              0              GICv3          43             Level          70500000.i2c        
+7:             0              0              0              0              0              0              0              0              GICv3          44             Level          70600000.i2c        
+8:             0              0              0              0              0              0              0              0              GICv3          46             Level          70800000.i2c        
+11:            0              0              0              0              0              0              0              0              GICv3          82             Level          sprd_dma            
+13:            0              0              0              0              0              0              0              0              GICv3          89             Level          mmc1                
+14:            0              0              0              0              0              0              0              0              GICv3          90             Level          mmc2                
+15:            0              0              0              0              0              0              0              0              GICv3          87             Level          musb-hdrc.0.auto    
+16:            0              0              0              0              0              0              0              0              GICv3          52             Edge           sprd_codec_dp       
+22:            0              0              0              0              0              0              0              0              GICv3          78             Level          DISPC               
+23:            0              0              0              0              0              0              0              0              GICv3          83             Level          GSP0                
+24:            0              0              0              0              0              0              0              0              GICv3          75             Level          VSP                 
+25:            0              0              0              0              0              0              0              0              GICv3          74             Level          JPG                 
+26:            0              0              0              0              0              0              0              0              GICv3          80             Level          DSI_INT0            
+27:            0              0              0              0              0              0              0              0              GICv3          81             Level          DSI_INT1            
+40:            0              0              0              0              0              0              0              0              GICv3          71             Level          pvrsrvkm            
+42:            0              0              0              0              0              0              0              0              GICv3          93             Level          pub0_dmc_mpu        
+52:            0              0              0              0              0              0              0              0              GICv3          100            Level          sprd-mailbox_source 
+54:            0              0              0              0              0              0              0              0              GICv3          151            Level          sprd-mailbox_target 
+55:            0              0              0              0              0              0              0              0              GICv3          115            Edge           cptl                
+58:            0              0              0              0              0              0              0              0              spi5.0         1              Edge           sprd_rtc            
+59:            0              0              0              0              0              0              0              0              spi5.0         4              Edge           41800000.spi:pmic@0:gpio-controller@280
+60:            0              0              0              0              0              0              0              0              spi5.0         10             Edge           typec               
+61:            0              0              0              0              0              0              0              0              spi5.0         6              Edge           sprd_codec_ap       
+62:            0              0              0              0              0              0              0              0              spi5.0         3              Edge           sprdfgu             
+63:            0              0              0              0              0              0              0              0              irq-pmic-eic   0              Level          musbvbusdectectirq  
+65:            0              0              0              0              0              0              0              0              irq-ap-eic     9              Edge           20300000.sdiocd     
+66:            0              0              0              0              0              0              0              0              CustomIPI      13             Edge           trusty              
+67:            0              0              0              0              0              0              0              0              SPRDSensor-dev1Edge           SPRDSensor_consumer1
+69:            0              0              0              0              0              0              0              0              irq-ap-gpio    124            Level          VolumeDownKey       
+70:            0              0              0              0              0              0              0              0              irq-pmic-eic   10             Level          VolumeUpKey         
+71:            0              0              0              0              0              0              0              0              irq-pmic-eic   1              Level          PowerKey            
+72:            0              0              0              0              0              0              0              0              irq-ap-gpio    144            Edge           adaptive_ts-irq     
+74:            0              0              0              0              0              0              0              0              irq-pmic-eic   9              Level          sprdbat_vbat_detect 
+78:            0              0              0              0              0              0              0              0              irq-pmic-eic   13             Level          headset_detect      
+79:            0              0              0              0              0              0              0              0              irq-pmic-eic   3              Level          headset_button      
+IPI2:          0              0              0              0              0              0              0              0              CPU            stop           interrupts          
+IPI5:          0              0              0              0              0              0              0              0              CPU            wake-up        interrupts          
+Err:           0              0              0              0              0              0              0              0                   
