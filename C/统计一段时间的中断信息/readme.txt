@@ -63,12 +63,13 @@ C:\Users\xxx\Desktop\power_script\interrupts>pause
 
 三、备注:
 1、当前已经验证的平台
-sharkl3
-pike2
 该脚本不区分具体的platform,原则上是架构不变，所有平台均适用
 
 2、适用于user和userdebug版本
 
 3、因资源有限，未验证所有平台所有board，如有问题请致电3216，感谢支持与配合
+
+4、这个程序是存在bug的，因为一旦CPU被拔核将不再显示CPUx的中断信息，但是在该CPU上发生的中断仍然存在。
+所以对于存在动态插拔核的机器，统计的数据将不再是一段时间的CPU信息
 
 
