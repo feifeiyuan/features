@@ -5,6 +5,9 @@
 #include <unistd.h>  
 #include <sys/time.h>  
 #include<unistd.h>
+#include <fnmatch.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 #include "transformation.h"
 
@@ -51,20 +54,26 @@ static si check_argv(char *tag, si *accummulate_time, char *value)
 
 static si get_processor_num()
 {
-	FILE *file_process = NULL;
-	char buffer[BUFFER_SIZE];
 	s8 cpu_num = 0;
-	file_process = fopen("/proc/cpuinfo","r");
-	if(file_process==NULL){
-		fprintf(stderr, "%s:failed run commond\n", __func__, "/proc/cpuinfo");  
-        return FAILED_OPEN_FILE; 
-	}
-	while(fgets(buffer, BUFFER_SIZE, file_process)!=NULL) {
-		if(strstr(buffer,"processor")!=NULL){
-			cpu_num++;
+	static char file_path[BUFFER_SIZE] = "/sys/devices/system/cpu";
+	char *pattern = "cpu?";
+	DIR *dir = NULL;
+	struct dirent *entry = NULL;
+	si ret = 0;
+	dir = opendir(file_path);
+	if(dir !=NULL){
+		while((entry = readdir(dir)) !=NULL){
+			ret = fnmatch(pattern, entry->d_name, FNM_PATHNAME|FNM_PERIOD);
+			if(ret==0){
+				cpu_num++;
+			}else if(ret == FNM_NOMATCH){
+				continue;
+			}else{
+				printf("error file=%s\n", entry->d_name);
+			}
 		}
+		closedir(dir);
 	}
-	fclose(file_process);
 	return cpu_num;
 }
 
@@ -259,6 +268,7 @@ int main(int argc, char *argv[])
 		printf("find cpu core num is not correct\n");
 		return ERROR;
 	}
+	printf("processor_num is %d\n", processor_num);
 
 	if(get_init_freq(CPU0_AVAILABLE_FREQ_PATH, &cpu0_size, cpu0_available_freq)<0)
 			return ERROR;
