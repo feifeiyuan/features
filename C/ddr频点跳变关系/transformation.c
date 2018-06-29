@@ -145,8 +145,13 @@ static s8 get_init_freq(char *file, u8 *size, uli *ddr_available_freq)
     // even freq     
     // odd count  
     for(i=0; i<MAX_AVALLABLE_FREQ; i++){  
-        if(fscanf(fp,"%ld", ddr_available_freq+i)!=1)  
-            break;  
+        if(fscanf(fp,"%ld", ddr_available_freq+i)==1){
+			if(ddr_available_freq[i]==0){
+				i--;
+			}
+		}else{
+			break;  
+		}
     }  
     *size = i;  
     fclose(fp); 
