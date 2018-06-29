@@ -161,9 +161,9 @@ static void print_IPI_debug(struct IPI_consumer *IPI, u8 cpu_count)
 		if(IPI->Next->consumer.total!=0){
 			printf("%5s\t", IPI->Next->consumer.id);
 			for(i=0;i<cpu_count; i++){
-				printf("%10ld\t", IPI->Next->consumer.per_cpu[i].num);
+				printf("%-15ld", IPI->Next->consumer.per_cpu[i].num);
 			}
-			printf("%5lld\t%-15s", IPI->Next->consumer.total, IPI->Next->consumer.dev_name);
+			printf("%10lld\t%-15s", IPI->Next->consumer.total, IPI->Next->consumer.dev_name);
 		}
 		IPI = IPI->Next;
 	}
@@ -172,24 +172,27 @@ static void print_IPI_debug(struct IPI_consumer *IPI, u8 cpu_count)
 static void print_external_debug(struct external_consumer *external, u8 cpu_count)
 {
 	u8 i = 0;
+	char name[SIZE];
 	if(external->Next!=NULL){
 		printf("%5s\t", " ");
 		for(i=0;i<cpu_count; i++){
 			if(external->Next->consumer.per_cpu[i].match){
-				printf("%10s\t", external->Next->consumer.per_cpu[i].name);
+				printf("%-15s", external->Next->consumer.per_cpu[i].name);
 			}else{
-				printf("%5s[boot]\t", external->Next->consumer.per_cpu[i].name);
+				strcpy(name,  external->Next->consumer.per_cpu[i].name);
+				strcat(name, "[boot]");
+				printf("%-15s", name);
 			}
 		}
-		printf("%s\n", "TOTAL");
+		printf("%10s\n", "TOTAL");
 	}
 	while(external->Next){
 		if(external->Next->consumer.total!=0){
 			printf("%5s\t", external->Next->consumer.desc.id);
 			for(i=0;i<cpu_count; i++){
-				printf("%10ld\t", external->Next->consumer.per_cpu[i].num);
+				printf("%-15ld", external->Next->consumer.per_cpu[i].num);
 			}
-			printf("%5lld\t%-15s\t%-5s\t%-10s\t%s", external->Next->consumer.total, external->Next->consumer.desc.request_irq, external->Next->consumer.desc.request_unkown,\
+			printf("%10lld\t%-15s\t%-5s\t%-10s\t%s", external->Next->consumer.total, external->Next->consumer.desc.request_irq, external->Next->consumer.desc.request_unkown,\
 			external->Next->consumer.desc.acpi_sci,  external->Next->consumer.desc.dev_name);
 		}
 		external = external->Next;
