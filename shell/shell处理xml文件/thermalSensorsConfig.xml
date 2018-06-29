@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<ThermalConfig>
+	<sensor>
+		<sensor_type>board-thmzone</sensor_type>
+		<polling_delay>2000</polling_delay>
+		<AvgPeriod>60000</AvgPeriod>
+		<zone_level id="1" type="active">
+			<temp>50000</temp>
+			<trip id="0">
+			    <action name="swtich_on_temp" arg="70000" file="/sys/class/thermal/thermal_zone0/trip_point_0_temp" />
+			    <action name="control_temp" arg="85000" file="/sys/class/thermal/thermal_zone0/trip_point_1_temp" />
+				<action name="brightness" arg="255" file="/sys/class/backlight/sprd_backlight/max_brightness"/>
+			</trip>
+			<trip id="1">
+			</trip>
+			<trip id="2">
+				<action name="brightness" arg="191" file="/sys/class/backlight/sprd_backlight/max_brightness"/>
+			</trip>
+			<trip id="3">
+			</trip>
+			<trip id="4">
+				<action name="brightness" arg="172" file="/sys/class/backlight/sprd_backlight/max_brightness"/>
+			</trip>
+		</zone_level>
+		<zone_level id="2" type="critical">
+			<temp>110000</temp>
+			<trip id="0">
+				<action name="shutdown" arg="" file=""/>
+			</trip>
+		</zone_level>
+	</sensor>
+	<sensor>
+		<sensor_type>chg-thmzone</sensor_type>
+		<polling_delay>2000</polling_delay>
+		<AvgPeriod>30000</AvgPeriod>
+		<zone_level id="1" type="active">
+			<temp>50000</temp>
+			<trip id="0">
+				<action name="charge" arg="0" file="/sys/class/power_supply/battery/input_current_limit" />
+			</trip>
+			<trip id="1">
+				<action name="charge" arg="1000000" file="/sys/class/power_supply/battery/input_current_limit" />
+			</trip>
+			<trip id="2">
+				<action name="charge" arg="800000" file="/sys/class/power_supply/battery/input_current_limit" />
+			</trip>
+		</zone_level>
+		<zone_level id="2" type="critical">
+			<temp>110000</temp>
+			<trip id="0">
+				<action name="shutdown" arg="" file=""/>
+			</trip>
+		</zone_level>
+	</sensor>
+	<sensor>
+		<sensor_type>pa-thmzone</sensor_type>
+		<polling_delay>2000</polling_delay>
+		<DroPeriod>30000</DroPeriod>
+		<AvgPeriod>30000</AvgPeriod>
+		<zone_level id="1" type="active">
+			<temp>60000</temp>
+			<trip id="0" >
+				<action name="powerback" arg="AT+SPTPPB=0" file="" />
+			</trip>
+			<trip id="1" >
+				<action name="powerback" arg="AT+SPTPPB=2" file="" />
+			</trip>
+			<trip id="2" >
+				<action name="powerback" arg="AT+SPTPPB=4" file="" />
+			</trip>
+			<trip id="3" >
+				<action name="powerback" arg="AT+SPTPPB=6" file="" />
+			</trip>
+		</zone_level>
+		<zone_level id="2" type="hot">
+			<temp>70000</temp>
+			<trip id="0" >
+				<action name="powerback" arg="AT+SPTPPB=8" file="" />
+			</trip>
+		</zone_level>
+		<zone_level id="3" type="hot">
+			<temp>80000</temp>
+			<trip id="0" >
+				<action name="powerback" arg="AT+SPTPPB=10" file="" />
+			</trip>
+		</zone_level>
+		<zone_level id="4" type="critical">
+			<temp>90000</temp>
+			<trip id="0" >
+				<action name="powerback" arg="AT+SPTPPB=255" file="" />
+			</trip>
+		</zone_level>
+	</sensor>
+</ThermalConfig>
