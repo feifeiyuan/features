@@ -22,7 +22,7 @@ chmod 777 /data/local/tmp/interrupts
 ./data/local/tmp/interrupts  -t 测试时间(默认10s) 
 
 
-2、示例:
+4、示例:
 C:\Users\xxx\Desktop\power_script\interrupts>adb shell "rm /data/local/tmp/interrupts"
 
 C:\Users\xxx\Desktop\power_script\interrupts>adb push C:\Users\xxx\Desktop\power_script\interrupts\interrupts /data/local/tmp/
@@ -37,39 +37,41 @@ C:\Users\xxx\Desktop\power_script\interrupts>if "" == "" set test_times=10
 
 C:\Users\xxx\Desktop\power_script\interrupts>adb shell "./data/local/tmp/interrupts  -t 10
 accumulate_time is 10
-         CPU0    CPU1
-  16:    1763   679376  681139  GIC             60      Level           r4p0_bcevt_timer
-   17:   1581   590300  591881  GIC             30      Edge            arch_timer
-   24:    714       0     714   GIC             44      Level           70600000.i2c
-   25:    226       0     226   GIC             45      Level           70700000.i2c
-   28:      1       0       1   GIC             87      Level           musb-hdrc.0.auto
-   29:     74       0      74   GIC             92      Level           mmc0
-   32:   1175       0    1175   GIC             78      Level           DISPC
-   39:   1171       0    1171   GIC             71      Level           60000000.gpu, 60000000.gpu, 60000000.gpu
-   48:      4       0       4   GIC             101     Level           sprd-mailbox_target
-   54:      1       0       1   GIC             70      Level           spi5.0
-   55:      1      15      16   spi5.0          6       Edge            chg_timer
-   57:      0       1       1   spi5.0          4       Edge            403c0000.spi:pmic@0:gpio-controller@280
-   61:      0       1       1   irq-pmic-eic    0       Level           musb vbus dectect irq
-   72:     59       0      59   irq-ap-gpio     64      Edge            adaptive_ts-irq
- IPI1:    216   65638   65854   Timer broadcast interrupts
- IPI2:   6632   3925249 3931881 Rescheduling interrupts
- IPI3:      0      34      34   Function call interrupts
- IPI4:    400   177329  177729  Single function call interrupts
- IPI6:      0       9       9   IRQ work interrupts
+              CPU0       CPU1[boot]     TOTAL
+  16:          838           38670        838   GIC             60      Level           r4p0_bcevt_timer
+   17:        1027           36284       1027   GIC             30      Edge            arch_timer
+   24:         430               0        430   GIC             44      Level           70600000.i2c
+   25:         128               0        128   GIC             45      Level           70700000.i2c
+   28:           1               0          1   GIC             87      Level           musb-hdrc.0.auto
+   29:          69               0         69   GIC             92      Level           mmc0
+   32:         836               0        836   GIC             78      Level           DISPC
+   39:         802               0        802   GIC             71      Level           60000000.gpu, 60000000.gpu, 60000000.gpu
+   48:           3               0          3   GIC             101     Level           sprd-mailbox_target
+   54:           3               0          3   GIC             70      Level           spi5.0
+   55:           1               8          1   spi5.0          6       Edge            chg_timer
+   57:           2               3          2   spi5.0          4       Edge            403c0000.spi:pmic@0:gpio-controller@280
+   71:           2               2          2   irq-pmic-eic    1       Level           Power Key
+   72:          33               0         33   irq-ap-gpio     64      Edge            adaptive_ts-irq
+ IPI1:          87            4012         87   Timer broadcast interrupts
+ IPI2:        4512          245168       4512   Rescheduling interrupts
+ IPI4:         430            8312        430   Single function call interrupts
 
 C:\Users\xxx\Desktop\power_script\interrupts>pause
 请按任意键继续. . .
 
+5 、结果说明
+TOTAL表示测试时间内能够统计出的发生在所有CPU上的中断总数
+对于测试过程中存在插拔核的情况的CPU,以CPUx[boot]格式显示，统计的中断数为开机到采样点的中断数
+不能视为测试时间内发生的中断数，TOTAL中也将不包含该数据
+
 三、备注:
 1、当前已经验证的平台
+sharkl3
+pike2
 该脚本不区分具体的platform,原则上是架构不变，所有平台均适用
 
 2、适用于user和userdebug版本
 
 3、因资源有限，未验证所有平台所有board，如有问题请致电3216，感谢支持与配合
-
-4、这个程序是存在bug的，因为一旦CPU被拔核将不再显示CPUx的中断信息，但是在该CPU上发生的中断仍然存在。
-所以对于存在动态插拔核的机器，统计的数据将不再是一段时间的CPU信息
 
 
