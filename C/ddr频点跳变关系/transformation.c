@@ -177,6 +177,11 @@ int main(int argc, char *argv[])
 	u8   ddr_size;  
     uli  ddr_available_freq[MAX_AVALLABLE_FREQ];  
 	char *file_path = NULL;
+	if(getuid()!=0){
+		fprintf(stderr, "You should download userdebug and su root Firstly\n");
+		return NOT_ROOT;
+	}
+	
 	if( argc < 1 ){  
         fprintf(stderr, "you must input at least one argv");   
         fprintf(stderr, "expl: ./data/local/tmp/ddr_trans_table -t 60(s)\n");  
