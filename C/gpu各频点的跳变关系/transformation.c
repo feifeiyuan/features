@@ -207,6 +207,10 @@ int main(int argc, char *argv[])
 	u8   gpu_size;  
     uli  gpu_available_freq[MAX_AVALLABLE_FREQ];  
 	char *file_path = NULL;
+	if(getuid()!=0){
+		fprintf(stderr, "You should download userdebug and su root Firstly\n");
+		return NOT_ROOT;
+	}
 	if( argc < 1 ){  
         fprintf(stderr, "you must input at least one argv");   
         fprintf(stderr, "expl: ./data/local/tmp/transformation -t 60(s)\n");  
