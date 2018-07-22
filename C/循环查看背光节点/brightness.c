@@ -21,7 +21,7 @@ static int get_brightness()
 		return FAILED_OPEN_FILE;
 	}
 	fscanf(fp, "%d", &value);
-	if(value<=0||value>255){
+	if(value<0||value>255){
 		fprintf(stderr, "The value should x>=0&&x<=255\n");
 		return ERROR;
 	}
