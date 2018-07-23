@@ -184,12 +184,12 @@ int main(int argc, char *argv[])
 	si   accummulate_time = 0;
 	if( argc < 1 ){  
         fprintf(stderr, "you must input at least one argv");   
-        fprintf(stderr, "expl: ./data/power_tools/ddr/ddr_bm/sharkl3_ddr_bm -t 240(s)\n");  
+        fprintf(stderr, "expl: ./xxxx -t 240(s)\n");  
         return INVALID_ARGV;  
     }  
 	if( argc%2!=1){
 		fprintf(stderr, "you must input odd number argvs");   
-		fprintf(stderr, "expl: ./data/power_tools/ddr/ddr_bm/sharkl3_ddr_bm -t 240(s)\n\n");  
+		fprintf(stderr, "expl: ./xxxx -t 240(s)\n\n");  
         return INVALID_ARGV;  
 	} 
 	
