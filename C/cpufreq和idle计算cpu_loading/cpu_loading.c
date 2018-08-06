@@ -175,6 +175,27 @@ static long long int get_idle_time(int cpu, char *state)
 	return value;
 }
 
+static int get_cpu_online(int cpu)
+{
+	char buffer[BUFFER_SIZE] = "/sys/devices/system/cpu/cpu";
+	char str[SIZE];
+	memset(str, 0, SIZE);
+	sprintf(str, "%d", cpu);
+	strcat(buffer, str);
+	strcat(buffer, "/online");
+	
+	FILE *fp = NULL;
+	int value = 0;
+	fp = fopen(buffer, "r");
+	if(fp==NULL){
+		fprintf(stderr, "faile open the file %s\n", buffer);
+		return ERROR;
+	}
+	fscanf(fp,"%d", &value);
+	fclose(fp);
+	return value;
+}
+
 
 static double dis_result(u8 cpu_size, ui *cpu_available_freq_start, int start, int end, uli total_time,  long long int *cpu_idle_state0_start)
 {
@@ -190,17 +211,22 @@ static double dis_result(u8 cpu_size, ui *cpu_available_freq_start, int start, i
 	}
 	for(j =start; j<end; j++){
 		printf("cpu%d\t", j);
-		if(total_time*10000<cpu_idle_state0_start[j]){
-			total_time = cpu_idle_state0_start[j];
+		int online = get_cpu_online(j);
+		if(online==0){
+			printf("unplugned\n");
+		}else{
+			if(total_time*10000<cpu_idle_state0_start[j]){
+				total_time = cpu_idle_state0_start[j];
+			}
+			float active_per = (total_time*10000-cpu_idle_state0_start[j])*1.0/(total_time*10000);
+			for(i=0; i<cpu_size; i=i+2){
+				float freq_perc = cpu_available_freq_start[i+1]*1.0/total_time;
+				float online_perc = active_per*freq_perc;
+				printf("%.2f%\t", online_perc*100);
+				sum_arr[i+1]+=online_perc;
+			}
+			printf("%.2f%\t%.2f%\n", active_per*100, (1-active_per)*100);
 		}
-		float active_per = (total_time*10000-cpu_idle_state0_start[j])*1.0/(total_time*10000);
-		for(i=0; i<cpu_size; i=i+2){
-			float freq_perc = cpu_available_freq_start[i+1]*1.0/total_time;
-			float online_perc = active_per*freq_perc;
-			printf("%.2f%\t", online_perc*100);
-			sum_arr[i+1]+=online_perc;
-		}
-		printf("%.2f%\t%.2f%\n", active_per*100, (1-active_per)*100);
 	}
 	printf("\t");
 	for(i=0; i<cpu_size; i=i+2){
