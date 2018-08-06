@@ -11,10 +11,12 @@
 
 #include "fix_gpu_freq.h"
 
-static char *get_certain_path(char *file, char *path)
+static char *get_certain_path(char *file, char *file_name)
 {	
-	static char file_path[BUFFER_SIZE];
+	//printf("file name is %s\n", file_name);
+	char file_path[BUFFER_SIZE];
 	char *pattern = "*.gpu";
+	char *path;
 	DIR *dir = NULL;
 	struct dirent *entry = NULL;
 	si ret = 0;
@@ -27,7 +29,8 @@ static char *get_certain_path(char *file, char *path)
 				strcat(file_path, entry->d_name);
 				strcat(file_path, "/devfreq/");
 				strcat(file_path, entry->d_name);
-				strcat(file_path, path);
+				strcat(file_path, file_name);
+				//printf("file_path:%s\n", file_path);
 				break;
 			}else if(ret == FNM_NOMATCH){
 				continue;
@@ -37,7 +40,13 @@ static char *get_certain_path(char *file, char *path)
 		}
 		closedir(dir);
 	}
-	return file_path;
+	path = (char *)malloc(BUFFER_SIZE);
+	if(path==NULL){
+		fprintf(stderr, "%s:there is no space\n", __func__);
+		return NULL;
+	}
+	strcpy(path, file_path);
+	return path;
 }
 
 static int write_node(char *value, char *path)
@@ -70,8 +79,7 @@ static char * read_node(char *path)
 		return NULL;
 	}
 	memset(str, 0, sizeof(buffer));
-	strcat(str,buffer);
-	printf("cur_freq:%s\n", str);
+	strcat(str, buffer);
 	fclose(fp);
 	return str;
 }
@@ -108,11 +116,30 @@ static int fix_freq(char *desc, int  cpu_size, ui *gpu_available_freq, char *pat
 	if(match_flag==1){
 		char *min_freq_path = get_certain_path(path, "/min_freq");
 		char *max_freq_path = get_certain_path(path, "/max_freq");
-		if(write_node(select_freq, min_freq_path)<0){
+		//printf("max_freq %s\n", max_freq_path);
+		//printf("min_freq %s\n", min_freq_path);
+		
+		char *lit_freq = read_node(min_freq_path);
+		if(lit_freq==NULL){
 			return ERROR;
 		}
-		if(write_node(select_freq, max_freq_path)<0){
-			return ERROR;
+		int lit_freq_int = CharToInt(lit_freq);
+		int select_freq_int  = CharToInt(select_freq);
+
+		if(select_freq_int>lit_freq_int){
+			if(write_node(select_freq, max_freq_path)<0){
+				return ERROR;
+			}
+			if(write_node(select_freq, min_freq_path)<0){
+				return ERROR;
+			}
+		}else{
+			if(write_node(select_freq, min_freq_path)<0){
+				return ERROR;
+			}
+			if(write_node(select_freq, max_freq_path)<0){
+				return ERROR;
+			}
 		}
 	}else{
 		fprintf(stderr, "You should avalible freq\n");
@@ -163,6 +190,7 @@ int main(int argc, char *argv[])
 	u8   gpu_size;
 	ui   gpu_available_freq[MAX_AVALLABLE_FREQ];  
 	char *file_path;
+	char *cur_freq;
 	if(getuid()!=0){
 		fprintf(stderr, "You should download userdebug and su root Firstly\n");
 		return NOT_ROOT;
@@ -177,9 +205,10 @@ int main(int argc, char *argv[])
 	if(fix_freq("gpu avalible freq:", gpu_size, gpu_available_freq, file_path)<0){
 		return ERROR;
 	}
-	
-	if(read_node(file_path)==NULL){
+	cur_freq = read_node(file_path);
+	if(cur_freq==NULL){
 		return ERROR;
 	}
+	printf("cur_freq:%s\n", cur_freq);
 	return 0;
 }
