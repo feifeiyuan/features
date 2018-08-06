@@ -122,7 +122,7 @@ static int fix_freq(char *desc, int  cpu_size, ui *cpu_available_freq, char *pat
 			match_flag = 1;
 	}
 	if(match_flag==1){
-		if(write_node(select_freq, path)){
+		if(write_node(select_freq, path)<0){
 			return ERROR;
 		}
 	}else{
@@ -151,6 +151,11 @@ int main(int argc, char *argv[])
 		if(get_init_freq_count(CPU4_AVAILABLE_FREQ_PATH, &cpu4_size, cpu4_available_freq)<0)
 			return ERROR;
 	} 
+	
+	if(write_node("userspace", CPU0_SCANLING_GOVERNOR)<0){
+		return ERROR;
+	}
+		
 	if(fix_freq("lit core", cpu0_size, cpu0_available_freq, CPU0_SET_FREQ_PATH)<0){
 		return ERROR;
 	}
@@ -159,6 +164,9 @@ int main(int argc, char *argv[])
 	}
 	
 	if(processor_num>LIT_CLUSTER_END){
+		if(write_node("userspace", CPU4_SCANLING_GOVERNOR)<0){
+			return ERROR;
+		}
 		if(fix_freq("big core", cpu4_size, cpu4_available_freq, CPU4_SET_FREQ_PATH)<0){
 			return ERROR;
 		}

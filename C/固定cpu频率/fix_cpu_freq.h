@@ -23,3 +23,6 @@ typedef unsigned long long ulli;
 
 #define CPU0_CUR_FREQ_PATH          "/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq"  
 #define CPU4_CUR_FREQ_PATH          "/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq"  
+
+#define CPU0_SCANLING_GOVERNOR		"/sys/devices/system/cpu/cpufreq/policy0/scaling_governor"
+#define CPU4_SCANLING_GOVERNOR		"/sys/devices/system/cpu/cpufreq/policy4/scaling_governor"
