@@ -112,4 +112,3 @@ sleep $test_time
 
 get_cpufreq_time "end"
 get_cpuidle_state "end"
-
