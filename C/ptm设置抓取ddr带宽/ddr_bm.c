@@ -162,8 +162,8 @@ int main(int argc, char *argv[])
 		return ERROR;
 	}
 	printf("displag_all data\n");
-	printf("./data/power_tools/ddr/ddr_bm/ddr_bm_log /mnt/obb/axi_per_log 1 > /data/power_tools/ddr/ddr_bm/sharkl3_ddr_bm.log\n");
+	printf("./data/power_tools/ddr/ddr_bm/ddr_bm_log /mnt/obb/axi_per_log 1 > /data/power_tools/ddr/ddr_bm/sharkl3_ddr_bm.csv\n");
 	printf("only displag wb and rb\n");
-	printf("./data/power_tools/ddr/ddr_bm/ddr_bm_log /mnt/obb/axi_per_log 0 > /data/power_tools/ddr/ddr_bm/sharkl3_ddr_bm.log\n");
+	printf("./data/power_tools/ddr/ddr_bm/ddr_bm_log /mnt/obb/axi_per_log 0 > /data/power_tools/ddr/ddr_bm/sharkl3_ddr_bm.csv\n");
 	return 0;
 }
