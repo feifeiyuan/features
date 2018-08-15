@@ -346,21 +346,27 @@ static si check_argv(si *interval, char *tag, si *accummulate_time, char *value)
 }
 
 static si get_processor_num()
-{
-	FILE *file_process = NULL;
-	char buffer[BUFFER_SIZE];
+{	
 	s8 cpu_num = 0;
-	file_process = fopen("/proc/cpuinfo","r");
-	if(file_process==NULL){
-		fprintf(stderr, "%s:failed run commond\n", __func__, "/proc/cpuinfo");  
-        return FAILED_OPEN_FILE; 
-	}
-	while(fgets(buffer, BUFFER_SIZE, file_process)!=NULL) {
-		if(strstr(buffer,"processor")!=NULL){
-			cpu_num++;
+	static char file_path[BUFFER_SIZE] = "/sys/devices/system/cpu";
+	char *pattern = "cpu?";
+	DIR *dir = NULL;
+	struct dirent *entry = NULL;
+	si ret = 0;
+	dir = opendir(file_path);
+	if(dir !=NULL){
+		while((entry = readdir(dir)) !=NULL){
+			ret = fnmatch(pattern, entry->d_name, FNM_PATHNAME|FNM_PERIOD);
+			if(ret==0){
+				cpu_num++;
+			}else if(ret == FNM_NOMATCH){
+				continue;
+			}else{
+				printf("error file=%s\n", entry->d_name);
+			}
 		}
+		closedir(dir);
 	}
-	fclose(file_process);
 	return cpu_num;
 }
 
