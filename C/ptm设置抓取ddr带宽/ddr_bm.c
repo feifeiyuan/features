@@ -128,17 +128,27 @@ static si LogToCSV()
 	return ret;
 }
 
+static si get_ddr_log(si accummulate_time)
+{
+	if(close_thermal_IPA()<0){
+		return ERROR;
+	}
+	if(set_ddr_mode(accummulate_time)<0){
+		return ERROR;
+	}
+}
+
 int main(int argc, char *argv[])  
 {
 	si   accummulate_time = 0;
 	if( argc < 1 ){  
         fprintf(stderr, "you must input at least one argv");   
-        fprintf(stderr, "expl: ./data/power_tools/ddr/ddr_bm/sharkl3_ddr_bm -t 240(s)\n");  
+        fprintf(stderr, "expl: ./data/power_tools/ddr/ddr_bm/ddr_bm -t 240(s)\n");  
         return INVALID_ARGV;  
     }  
 	if( argc%2!=1){
 		fprintf(stderr, "you must input odd number argvs");   
-		fprintf(stderr, "expl: ./data/power_tools/ddr/ddr_bm/sharkl3_ddr_bm -t 240(s)\n\n");  
+		fprintf(stderr, "expl: ./data/power_tools/ddr/ddr_bm/ddr_bm -t 240(s)\n\n");  
         return INVALID_ARGV;  
 	} 
 	
@@ -155,15 +165,14 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "You should download userdebug and su root Firstly\n");
 		return NOT_ROOT;
 	}
-	if(close_thermal_IPA()<0){
+	
+	if(get_ddr_log(accummulate_time)<0){
 		return ERROR;
 	}
-	if(set_ddr_mode(accummulate_time)<0){
-		return ERROR;
-	}
+	
 	printf("displag_all data\n");
-	printf("./data/power_tools/ddr/ddr_bm/ddr_bm_log /mnt/obb/axi_per_log 1 > /data/power_tools/ddr/ddr_bm/sharkl3_ddr_bm.csv\n");
+	printf("./data/power_tools/ddr/ddr_bm/ddr_bm_log /mnt/obb/axi_per_log 1 > /data/power_tools/ddr/ddr_bm/ddr_bm.csv\n");
 	printf("only displag wb and rb\n");
-	printf("./data/power_tools/ddr/ddr_bm/ddr_bm_log /mnt/obb/axi_per_log 0 > /data/power_tools/ddr/ddr_bm/sharkl3_ddr_bm.csv\n");
+	printf("./data/power_tools/ddr/ddr_bm/ddr_bm_log /mnt/obb/axi_per_log 0 > /data/power_tools/ddr/ddr_bm/ddr_bm.csv\n");
 	return 0;
 }
