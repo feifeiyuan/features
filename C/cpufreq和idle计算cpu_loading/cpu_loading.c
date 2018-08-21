@@ -200,6 +200,7 @@ static int get_cpu_online(int cpu)
 static double dis_result(u8 cpu_size, ui *cpu_available_freq_start, int start, int end, uli total_time,  long long int *cpu_idle_state0_start)
 {
 	int i = 0, j = 0;
+	uli  temp_total_time = total_time;
 	printf("\t");
 	for(i=0; i<cpu_size; i=i+2){
 		printf("%d\t", cpu_available_freq_start[i]);
@@ -230,7 +231,7 @@ static double dis_result(u8 cpu_size, ui *cpu_available_freq_start, int start, i
 	}
 	printf("\t");
 	for(i=0; i<cpu_size; i=i+2){
-		float freq_perc = cpu_available_freq_start[i+1]*1.0/total_time;
+		float freq_perc = cpu_available_freq_start[i+1]*1.0/temp_total_time;
 		printf("%.2f%\t", freq_perc*100);
 	}
 	double sum = 0;
