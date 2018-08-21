@@ -214,12 +214,18 @@ static int close_big_fix_lit_freq(char *max_freq)
 	if(write_node(max_freq, LIT_MAX_FREQ)<0){
 		return ERROR;
 	}
+	// close big
+	hotplug("4", "0");
+	hotplug("5", "0");
+	hotplug("6", "0");
+	hotplug("7", "0");
 	return 0;
 }
 
+
 static int set_original()
 {
-		// open lit
+	// open lit
 	hotplug("1", "1");
 	hotplug("2", "1");
 	hotplug("3", "1");
@@ -267,14 +273,17 @@ static int hotplug_low_freq(int *statu)
 			*statu = CLOSE_BIG_LIMIT_LIT_768;
 			break;
 		case CLOSE_BIG_LIMIT_LIT_768:
+			close_big_fix_lit_freq("768000");
 			hotplug("3", "0");
 			*statu = CLOSE_BIG_LIMIT_LIT_768_CLOSE_3;
 			break;
 		case CLOSE_BIG_LIMIT_LIT_768_CLOSE_3:
+			close_big_fix_lit_freq("768000");
 			hotplug("2", "0");
 			*statu = CLOSE_BIG_LIMIT_LIT_768_CLOSE_2;
 			break;
 		case CLOSE_BIG_LIMIT_LIT_768_CLOSE_2:
+			close_big_fix_lit_freq("768000");
 			hotplug("1", "0");
 			*statu = CLOSE_BIG_LIMIT_LIT_768_CLOSE_1;
 			break;
@@ -309,6 +318,7 @@ static int unhotplug_high_freq(int *statu)
 			*statu = CLOSE_BIG_LIMIT_LIT_1100;
 			break;
 		case CLOSE_BIG_LIMIT_LIT_1100:
+			close_big_fix_lit_freq("1200000");
 			close_big_no_limit_lit();
 			*statu = CLOSE_BIG_NO_LIMIT_LIT;
 			break;
@@ -319,14 +329,16 @@ static int unhotplug_high_freq(int *statu)
 	}
 }
 
-
-
 int main()
 {
 	long int start_frame = 0;
 	float fps = 0.0;
 	float stander = 0;
-	float interval = 2;
+	
+	printf("please input stander fps\n");
+	scanf("%d", &stander);
+	
+	float interval = 1;
 	int flag = 0;
 	if(getuid()!=0){
 		fprintf(stderr, "You should download userdebug and su root Firstly\n");
@@ -353,7 +365,6 @@ int main()
 		return ERROR;
 	}
 	
-	#if 1
 	statu = ORIGIMAL;
 	while(1){
 		start_frame = dumpsys();  
@@ -377,5 +388,4 @@ int main()
 			printf("%.2f, statu is %d\n", fps, statu);
 		}
 	}
-	#endif
 }
