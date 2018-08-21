@@ -108,6 +108,64 @@ static s8 get_init_freq_count(const char *cpu_cur_path, u8 *size, ui *cpu_availa
     return 0;  
 }
 
+static int get_vdd_lit()
+{
+	char *file_path = NULL;
+	if(!access("/sys/kernel/debug/fan53555-reg/voltage",F_OK)){
+		file_path = "/sys/kernel/debug/fan53555-reg/voltage";
+	}else if(!access("/sys/kernel/debug/sprd-regulator/vddarm0/voltage",F_OK)){
+		file_path = "/sys/kernel/debug/sprd-regulator/vddarm0/voltage";
+	}else if(!access("/sys/kernel/debug/sprd-regulator/vddcpu/voltage",F_OK)){
+		file_path = "/sys/kernel/debug/sprd-regulator/vddcpu/voltage";
+	}else if(!access("/sys/kernel/debug/sprd-regulator/vddcore/voltage",F_OK)){
+		file_path = "/sys/kernel/debug/sprd-regulator/vddcore/voltage";
+	}else{
+		printf("we do not find correct path for GPU info\n");
+		return ERROR;
+	}
+	
+	int current_freq = 0;
+	FILE *fp = NULL;
+	fp = fopen(file_path, "r");
+	if(fp==NULL){
+		fprintf(stderr, "failed opend file:%s", file_path);  
+        return FAILED_OPEN_FILE;  
+	}
+	fscanf(fp,"%d", &current_freq);
+	printf("%d\n", current_freq);
+	fclose(fp);
+	return current_freq;
+}
+
+static int get_vdd_big()
+{
+	char *file_path = NULL;
+	if(!access("/sys/kernel/debug/sprd-regulator/vddarm1/voltage",F_OK)){
+		file_path = "/sys/kernel/debug/sprd-regulator/vddarm1/voltage";
+	}else if(!access("/sys/kernel/debug/sprd-regulator/vddcpu/voltage",F_OK)){
+		file_path = "/sys/kernel/debug/sprd-regulator/vddcpu/voltage";
+	}else{
+		printf("we do not find correct path for GPU info\n");
+		return ERROR;
+	}
+	
+	//printf("%s\n", file_path);
+	int current_freq = 0;
+	FILE *fp = NULL;
+	fp = fopen(file_path, "r");
+	if(fp==NULL){
+		fprintf(stderr, "failed opend file:%s", file_path);  
+        return FAILED_OPEN_FILE;  
+	}
+	fscanf(fp,"%d", &current_freq);
+	printf("%d\n", current_freq);
+	fclose(fp);
+	return current_freq;
+}
+
+
+
+
 static int cal_state_time(u8 cpu0_size, u8 cpu4_size, ui *cpu0_available_freq_start, \
 ui *cpu4_available_freq_start, ui *cpu0_available_freq_end, ui *cpu4_available_freq_end, si processor_num, uli *lit_total_time, uli *big_total_time)
 {
@@ -189,6 +247,7 @@ static long long int get_idle_time(int cpu, char *state)
 static double dis_result(u8 cpu_size, ui *cpu_available_freq_start, int start, int end, uli total_time,  long long int *cpu_idle_state0_start)
 {
 	int i = 0, j = 0;
+	uli  temp_total_time = total_time;
 	printf("\t");
 	for(i=0; i<cpu_size; i=i+2){
 		printf("%d\t", cpu_available_freq_start[i]);
@@ -214,7 +273,7 @@ static double dis_result(u8 cpu_size, ui *cpu_available_freq_start, int start, i
 	}
 	printf("\t");
 	for(i=0; i<cpu_size; i=i+2){
-		float freq_perc = cpu_available_freq_start[i+1]*1.0/total_time;
+		float freq_perc = cpu_available_freq_start[i+1]*1.0/temp_total_time;
 		printf("%.2f%\t", freq_perc*100);
 	}
 	double sum = 0;
@@ -496,7 +555,7 @@ static int data_ddr_simpling(si accummulate_time, u8 ddr_size, ui *ddr_available
 	}
 	gettimeofday(&end, NULL);  
 	timeuse = (1000000 * ( end.tv_sec - start.tv_sec ) + end.tv_usec - start.tv_usec)/1000.0;  
-	printf("time_use is %.2fms\n", timeuse); 
+	//printf("time_use is %.2fms\n", timeuse); 
 	
 	for(i=0; i<ddr_size; i=i+2){
 		printf("%d: %20d\t\t%.2f%\n", ddr_available_freq[i], ddr_available_freq[i+1], ddr_available_freq[i+1]*1.0*100/total_count);
@@ -526,7 +585,7 @@ static int get_gpu_loading(si gpu_time)
 	ulli gpu_utilisation_total = 0;
     ulli   gpu_available_freq[MAX_AVALLABLE_FREQ], gpu_freq_utilisation[MAX_AVALLABLE_FREQ];  
 	char *file_path;
-	printf("\ngpu_time is %d(s)\t", gpu_time); 
+	printf("\ngpu_time is %d(s)\n", gpu_time); 
 	file_path = access_dir_exist();
 	if(file_path==NULL){
 		return ERROR;
@@ -543,9 +602,9 @@ static int get_gpu_loading(si gpu_time)
 	
 	if(get_data(get_certain_path(file_path, "/polling_interval"), &polling_interval))
 		return ERROR;
-	printf("polling interval is %d(ms)\t", polling_interval);
+	//printf("polling interval is %d(ms)\t", polling_interval);
 	counts = gpu_time*1000/polling_interval;
-	printf("counts is %d\n", counts);
+	//printf("counts is %d\n", counts);
 	
 	
 	data_simpling(gpu_available_freq, gpu_freq_utilisation, counts, gpu_size, polling_interval, get_certain_path(file_path, "/cur_freq"));
@@ -554,10 +613,9 @@ static int get_gpu_loading(si gpu_time)
 	//debug_cpufreq_count(gpu_size, gpu_freq_utilisation);
 	
 	for(i=0; i<gpu_size; i=i+2){
-		printf("%.f: %lld\t\t", gpu_available_freq[i]*1.0/1000000, gpu_available_freq[i+1]);
+		//printf("%.f: %lld\t\t", gpu_available_freq[i]*1.0/1000000, gpu_available_freq[i+1]);
 		gpu_utilisation_total += gpu_freq_utilisation[i+1];
 	}
-	printf("\n\n");
 	
 	for(i=0; i<gpu_size; i=i+2){
 		if(gpu_available_freq[i+1]!=0){
@@ -591,6 +649,72 @@ static int CharToInt(char *str)
 	}
 	return freq;
 } 
+
+
+static int write_node_int(int value, char *path)
+{
+	FILE *fp  = NULL;
+	fp = fopen(path, "w");
+	if(fp==NULL){
+		fprintf(stderr, "faile open the file %s\n", path);
+		return ERROR;
+	}
+	fprintf(fp, "%d", value);
+	printf("%d\t", value);
+	fclose(fp);
+	return 0;
+}
+
+static int fix_freq_get_vdd(int cpu_size, int *cpu_available_freq, char *path, char *governor_path)
+{
+	int i = 0;
+	char *default_governor;
+	default_governor = read_node_str(governor_path);
+	write_node("userspace", governor_path);
+	for(i=0; i<cpu_size; i++){
+		if(write_node_int(cpu_available_freq[i], path)){
+			return ERROR;
+		}
+		
+		if(strcmp(governor_path, LLT_GOVERNOR)==0){
+			if(get_vdd_lit()<0){
+				return ERROR;
+			}
+		}else{
+			if(get_vdd_big()<0){
+				return ERROR;
+			}
+		}
+	}
+	write_node(default_governor, governor_path);
+	return 0;
+}
+
+
+static int get_vdd()
+{
+	u8   cpu0_size, cpu4_size;
+	ui   cpu0_available_freq[MAX_AVALLABLE_FREQ], cpu4_available_freq[MAX_AVALLABLE_FREQ];  
+	
+	si 	 processor_num = 0;
+	processor_num = get_processor_num();
+	if(processor_num<=0){
+		return ERROR;
+	}
+	if(get_init_freq_count(CPU0_AVAILABLE_FREQ_PATH, &cpu0_size, cpu0_available_freq)<0)
+		return ERROR;
+	printf("\ndvfs table\nlit core:\n");
+	printf("/* kHz	uV */\n");
+	fix_freq_get_vdd(cpu0_size, cpu0_available_freq, CPU0_SET_FREQ_PATH, LLT_GOVERNOR);
+	
+	if(processor_num>LIT_CLUSTER_END){
+		if(get_init_freq_count(CPU4_AVAILABLE_FREQ_PATH, &cpu4_size, cpu4_available_freq)<0)
+			return ERROR;
+		printf("\nbig core:\n");
+		printf("/* kHz	uV */\n");
+		fix_freq_get_vdd(cpu4_size, cpu4_available_freq, CPU4_SET_FREQ_PATH, BIG_GOVERNOR);
+	}	
+}
 
 
 int main(int argc, char *argv[])
@@ -653,6 +777,7 @@ int main(int argc, char *argv[])
 		ddr_time = DEFAULT_DDR_TIME;
 	
 	get_cpu_loading(cpu_time);
+	get_vdd();
 	
 	get_gpu_loading(gpu_time);
 	

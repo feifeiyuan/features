@@ -28,3 +28,17 @@ typedef unsigned long long ulli;
 #define DDR_CUR_FREQ				"/sys/class/devfreq/scene-frequency/sprd_governor/ddrinfo_cur_freq"
 #define DDR_OVERFLOW				"/sys/class/devfreq/scene-frequency/sprd_governor/scaling_overflow"
 #define DDR_UNDERFLOW				"/sys/class/devfreq/scene-frequency/sprd_governor/scaling_underflow"
+
+
+#define CPU0_SET_FREQ_PATH          "/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed"  
+#define CPU4_SET_FREQ_PATH          "/sys/devices/system/cpu/cpu4/cpufreq/scaling_setspeed"  
+
+#define LLT_GOVERNOR				"/sys/devices/system/cpu/cpufreq/policy0/scaling_governor"
+#define BIG_GOVERNOR				"/sys/devices/system/cpu/cpufreq/policy4/scaling_governor"
+
+
+#define CPU0_CUR_FREQ_PATH          "/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq"  
+#define CPU4_CUR_FREQ_PATH          "/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq"
+
+#define MAX_CPU						7
+#define MIN_CPU						0
