@@ -23,10 +23,11 @@ static top_tree InsertNode(top_tree tree, struct top_component top_men)
 			fprintf(stderr,"there is no space\n");  
 			return NULL;
 		}
-		tree->top_menber = top_men;
+		tree->cpu_per = top_men.cpu_per;
+		strcpy(tree->args, top_men.args);
 		tree->Left = NULL;
 		tree->Right = NULL;
-	}else if(top_men.cpu_per >= tree->top_menber.cpu_per){
+	}else if(top_men.cpu_per >= tree->cpu_per){
 		tree->Right = InsertNode(tree->Right, top_men);
 	}else{
 		tree->Left = InsertNode(tree->Left, top_men);
@@ -40,7 +41,7 @@ static s8 TailView(top_tree tree, s8 count, ui num)
 	if(tree){
 		order = TailView(tree->Right, order, num);
 		if(order<num){
-			printf("%ld\t%.1f\t%s",tree->top_menber.pid,  tree->top_menber.cpu_per, tree->top_menber.args);
+			printf("%.1f\t%s",tree->cpu_per, tree->args);
 			order++;
 		}
 		order = TailView(tree->Left, order, num);
@@ -48,16 +49,18 @@ static s8 TailView(top_tree tree, s8 count, ui num)
 	return order;
 }
 
+
 static void ComputeAverage(top_node head, ui num)  
 {  
     top_node position = head->Next;  
 	top_tree tree = NULL;
-	printf("PID\t%[CPU]\t%s\n", "ARGS");
+	printf("%[CPU]\t%s\n", "ARGS");
     while(position!=NULL){
 		position->top_menber.cpu_per = position->top_menber.cpu_per/position->top_menber.count;
 		//printf("%ld\t%.1f\t%s", position->top_menber.pid,  position->top_menber.cpu_per, position->top_menber.args);
         position = position->Next;  
     }
+	
 	// change double find heap
 	position = head->Next;  
 	while(position){
@@ -98,13 +101,13 @@ static s8 get_top_info(ui accummulate_time)
 	return ret;
 }
 
-static top_node FindNode(top_node head, uli pid)
+static top_node FindNode(top_node head, char *cmd)
 {
 	top_node position = NULL;
 	position = head->Next;
 	while(position){
 		//printf("pid is %ld\t position->pid is %ld\n", pid, position->pid);
-		if(position->top_menber.pid==pid){
+		if(strcmp(position->top_menber.args, cmd)==0){
 			return position;
 		}
 		position = position->Next;
@@ -114,7 +117,7 @@ static top_node FindNode(top_node head, uli pid)
 
 static top_node CreateListCell(top_node head, top_node ahead, float percent, char *cmd, uli pid){  
     top_node position = NULL;  
-	position = FindNode(head, pid);
+	position = FindNode(head, cmd);
 	if(position==NULL){
 		position  = (top_node)malloc(sizeof(struct top_info));  
 		if(position==NULL){  
@@ -225,14 +228,14 @@ static s8 deal_statistic(u8 cpu_index, u8 arg_index, u8 pid_index, ui num)
 	return 0;
 }
 
-static si get_processor_num(u8 *cpu_index, u8 *arg_index, u8 *pid_index)
+static si get_title_info(u8 *cpu_index, u8 *arg_index, u8 *pid_index)
 {
 	FILE *fp = NULL;
 	char buffer[BUFFER_SIZE], *child="PID USER", *delim = " ";
 	fp = popen("top -n 1","r");
 	u8 order = 0;
 	if(fp==NULL){
-		fprintf(stderr, "%s:failed run commond\n", __func__, "/proc/cpuinfo| grep \"processor\"| wc -l");  
+		fprintf(stderr, "%s:failed run commond\n", __func__, "top -n 1");  
         return FAILED_OPEN_FILE; 
 	}
 	while(fgets(buffer, BUFFER_SIZE, fp)){
@@ -323,12 +326,12 @@ int main(int argc, char *argv[])
 	ui accummulate_time = 0, num = 0;
 	if( argc < 1 ){  
         fprintf(stderr, "you must input at least one argv");   
-        fprintf(stderr, "expl: ./data/local/tmp/sprd_top -t 60(s)\n");  
+        fprintf(stderr, "expl: ./data/power_tools/top/top -t 60(s) -n 10\n");  
         return INVALID_ARGV;  
     }  
 	if( argc%2!=1){
 		fprintf(stderr, "you must input odd number argvs");   
-		fprintf(stderr, "expl: ./data/local/tmp/cpu_sgm -t 60(s)\n");  
+		fprintf(stderr, "expl: ./data/power_tools/top/top -t 60(s) -n 10\n");  
         return INVALID_ARGV;  
 	}
 	if(argc==1){  
@@ -353,7 +356,7 @@ int main(int argc, char *argv[])
 		return ERROR;
 	
 	
-	if(get_processor_num(&cpu_index, &arg_index, &pid_index)<0){
+	if(get_title_info(&cpu_index, &arg_index, &pid_index)<0){
 		return ERROR;
 	}
 	//printf("%d\t%d\t%d\n", pid_index, cpu_index, arg_index);

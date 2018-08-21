@@ -32,7 +32,8 @@ struct top_info{
 };
 
 struct top_heap{
-	struct top_component top_menber;
+	float   cpu_per;
+	char    args[BUFFER_SIZE];
 	struct top_heap * Left;
 	struct top_heap * Right;
 };
