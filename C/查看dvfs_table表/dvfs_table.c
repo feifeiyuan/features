@@ -156,7 +156,7 @@ static int write_node(int value, char *path)
 	return 0;
 }
 
-static int switch_usersapce(char *path)
+static int switch_governor(char *path, char *governor)
 {
 	FILE *fp  = NULL;
 	fp = fopen(path, "w");
@@ -164,15 +164,38 @@ static int switch_usersapce(char *path)
 		fprintf(stderr, "faile open the file %s\n", path);
 		return ERROR;
 	}
-	fprintf(fp, "%s", "userspace");
+	fprintf(fp, "%s", governor);
 	fclose(fp);
 	return 0;
+}
+
+static char * read_node_str(char *path)
+{
+	FILE *fp  = NULL;
+	char buffer[BUFFER_SIZE], *str;
+	fp = fopen(path, "r");
+	if(fp==NULL){
+		fprintf(stderr, "faile open the file %s\n", path);
+		return NULL;
+	}
+	fgets(buffer, BUFFER_SIZE, fp);
+	str = (char *)malloc(sizeof(buffer));
+	if(str==NULL){
+		fprintf(stderr, "%s there is no space\n", __func__);
+		return NULL;
+	}
+	memset(str, 0, sizeof(buffer));
+	strcat(str,buffer);
+	fclose(fp);
+	return str;
 }
 
 static int fix_freq_get_vdd(int cpu_size, int *cpu_available_freq, char *path, char *governor_path)
 {
 	int i = 0;
-	switch_usersapce(governor_path);
+	char *default_governor = NULL;
+	default_governor = read_node_str(governor_path);
+	switch_governor(governor_path, "userspace");
 	for(i=0; i<cpu_size; i++){
 		if(write_node(cpu_available_freq[i], path)){
 			return ERROR;
@@ -188,6 +211,7 @@ static int fix_freq_get_vdd(int cpu_size, int *cpu_available_freq, char *path, c
 			}
 		}
 	}
+	switch_governor(governor_path, default_governor);
 	return 0;
 }
 
@@ -221,8 +245,8 @@ int main()
 	
 	int i = 0;
 	for(i=0; i<processor_num; i++){
-		close_idle(IntToChar(i), "state0");
-		close_idle(IntToChar(i), "state1");
+		//close_idle(IntToChar(i), "state0");
+		//close_idle(IntToChar(i), "state1");
 	}
 	
 }
