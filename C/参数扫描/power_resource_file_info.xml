@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright (C) 2012 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+
+<resources>
+    <file path="/dev" file="cluster0_freq_min" no_has_def="1" >
+        <attr name="comp_func"    value="common_comp_ascend_order_hex" />
+        <attr name="set_func"     value="common_set_for_release_when_close" />
+        <attr name="clear_func"   value="common_clear_for_release_when_close" />
+    </file>
+    <file path="/dev" file="cluster0_freq_max" no_has_def="1" >
+        <attr name="comp_func"    value="common_comp_ascend_order_hex" />
+        <attr name="set_func"     value="common_set_for_release_when_close" />
+        <attr name="clear_func"   value="common_clear_for_release_when_close" />
+    </file>
+    <file path="/dev" file="cluster1_freq_min" no_has_def="1" >
+        <attr name="comp_func"    value="common_comp_ascend_order_hex" />
+        <attr name="set_func"     value="common_set_for_release_when_close" />
+        <attr name="clear_func"   value="common_clear_for_release_when_close" />
+    </file>
+    <file path="/dev" file="cluster1_freq_max" no_has_def="1" >
+        <attr name="comp_func"    value="common_comp_ascend_order_hex" />
+        <attr name="set_func"     value="common_set_for_release_when_close" />
+        <attr name="clear_func"   value="common_clear_for_release_when_close" />
+    </file>
+    <file path="/sys/class/devfreq/scene-frequency/sprd_governor" file="scene_boost_dfs" no_has_def="1" >
+        <attr name="comp_func"    value="common_comp_ascend_order" />
+        <attr name="set_func"     value="devfreq_ddr_set" />
+        <attr name="clear_func"   value="devfreq_ddr_clear" />
+    </file>
+    <file path="/sys/devices/system/cpu/cpuhotplug" file="cluster0_core_min_limit" >
+        <attr name="comp_func"    value="common_comp_ascend_order" />
+        <attr name="set_func"     value="common_set" />
+        <attr name="clear_func"   value="common_clear" />
+        <attr name="def_value"    value="1" />
+    </file>
+    <file path="/sys/devices/system/cpu/cpuhotplug" file="cluster0_core_max_limit" >
+        <attr name="comp_func"    value="common_comp_ascend_order" />
+        <attr name="set_func"     value="common_set" />
+        <attr name="clear_func"   value="common_clear" />
+        <attr name="def_value"    value="4" />
+    </file>
+    <file path="/sys/devices/system/cpu/cpuhotplug" file="cluster1_core_min_limit" >
+        <attr name="comp_func"    value="common_comp_ascend_order" />
+        <attr name="set_func"     value="common_set" />
+        <attr name="clear_func"   value="common_clear" />
+    </file>
+    <file path="/sys/devices/system/cpu/cpuhotplug" file="cluster1_core_max_limit" >
+        <attr name="comp_func"    value="common_comp_ascend_order" />
+        <attr name="set_func"     value="common_set" />
+        <attr name="clear_func"   value="common_clear" />
+        <attr name="def_value"    value="4" />
+    </file>
+    <file path="subsys" file="schedtune" >
+        <attr name="comp_func"    value="common_subsys_comp" />
+        <attr name="set_func"     value="common_subsys_set" />
+        <attr name="clear_func"   value="common_subsys_clear" />
+        <attr name="def_value"    value="conf_1" />
+    </file>
+    <file path="/sys/devices/system/cpu/cpu0/cpufreq/schedutil" file="freq_margin" >
+        <attr name="comp_func"    value="common_comp_ascend_order" />
+        <attr name="set_func"     value="common_set" />
+        <attr name="clear_func"   value="common_clear" />
+    </file>
+    <file path="/sys/devices/system/cpu/cpu4/cpufreq/schedutil" file="freq_margin" >
+        <attr name="comp_func"    value="common_comp_ascend_order" />
+        <attr name="set_func"     value="common_set" />
+        <attr name="clear_func"   value="common_clear" />
+    </file>
+    <subsys name="schedtune" >
+        <inode path="/dev/stune" file="schedtune.boost" />
+        <inode path="/dev/stune/top-app" file="schedtune.boost" />
+        <inode path="/dev/stune/top-app" file="schedtune.prefer_idle" />
+        <inode path="/dev/stune/foreground" file="schedtune.boost" />
+        <inode path="/dev/stune/foreground" file="schedtune.prefer_idle" />
+        <inode path="/dev/stune/background" file="schedtune.boost" />
+        <inode path="/dev/stune/background" file="schedtune.prefer_idle" />
+        <conf name="conf_2" priority="1" >
+            <set path="/dev/stune" file="schedtune.boost" value="-30" />
+            <set path="/dev/stune/top-app" file="schedtune.boost" value="-30" />
+            <set path="/dev/stune/foreground" file="schedtune.boost" value="-30" />
+            <set path="/dev/stune/background" file="schedtune.boost" value="-30" />
+        </conf>
+        <conf name="conf_1" >
+        </conf>
+    </subsys>
+</resources>

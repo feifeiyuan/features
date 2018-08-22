@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<app_powersave_config>
+<package name="com.pp.assistant" optimize="1" alarm="0" wakelock="0" network="0" autolaunch="1" secondarylaunch="1" lockscreencleanup="1" consumertype="0" />
+<package name="com.spreadtrum.itestapp" optimize="1" alarm="0" wakelock="0" network="0" autolaunch="2" secondarylaunch="2" lockscreencleanup="2" consumertype="0" />
+<package name="com.comcat.activity" optimize="1" alarm="0" wakelock="0" network="0" autolaunch="2" secondarylaunch="2" lockscreencleanup="2" consumertype="0" />
+<package name="com.sprd.sleepwakeuptest" optimize="1" alarm="0" wakelock="0" network="0" autolaunch="2" secondarylaunch="2" lockscreencleanup="2" consumertype="0" />
+<package name="sprdtest.message" optimize="1" alarm="0" wakelock="0" network="0" autolaunch="2" secondarylaunch="2" lockscreencleanup="2" consumertype="0" />
+<package name="com.greenpoint.android.mc10086.activity" optimize="1" alarm="0" wakelock="0" network="0" autolaunch="2" secondarylaunch="2" lockscreencleanup="2" consumertype="0" />
+<package name="com.jio.emiddleware" optimize="1" alarm="0" wakelock="0" network="0" autolaunch="2" secondarylaunch="2" lockscreencleanup="2" consumertype="0" />
+</app_powersave_config>
