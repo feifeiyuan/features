@@ -402,12 +402,12 @@ int main(int argc, char *argv[])
 	// input argc less than 1  
     if( argc < 1 ){  
         fprintf(stderr, "you must input at least one argv");   
-        fprintf(stderr, "expl: ./data/local/tmp/cpu_sgm -i 100(ms) -t 60(s)\n");  
+        fprintf(stderr, "expl: ./data/power_tools/fps/fps -t  1\n");  
         return INVALID_ARGV;  
     }  
 	if( argc%2!=1){
 		fprintf(stderr, "you must input odd number argvs");   
-		fprintf(stderr, "expl: ./data/local/tmp/cpu_sgm -i 100(ms) -t 60(s)\n");  
+		fprintf(stderr, "expl: ./data/power_tools/fps/fps -t  1\n");  
         return INVALID_ARGV;  
 	}
 	
