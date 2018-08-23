@@ -6,6 +6,14 @@
 #define INVALID_ARGV	-2
 
 #define DEFAULT_TIME	60
+#define DEFAULT_DIS		1
+
+typedef signed      int    si;  
+typedef signed      char   s8;  
+typedef unsigned    char   u8;  
+typedef unsigned    int    ui;  
+typedef unsigned long int  uli;  
+typedef unsigned long long ulli;
 
 static long int dumpsys()
 {
@@ -62,20 +70,28 @@ static int get_argv(char *time_char)
     return ret;  
 } 
 
-static int check_argv(char *tag, int *accummulate_time, char *value)
+static si check_argv(si *dis, char *tag, si *accummulate_time, char *value)
 {
-	int argv_time = *accummulate_time;
-	if(strcmp(tag,"-t")==0){
+	si argv_dis=*dis, argv_time = *accummulate_time;
+	if(strcmp(tag,"-d")==0){
+		if(strcmp(value, "0")==0)
+			argv_dis = 0;
+		else
+			argv_dis = 1;
+		if(argv_dis<0)
+			return INVALID_ARGV;  
+	}else if(strcmp(tag,"-t")==0){
 		argv_time = get_argv(value); 
 		if(argv_time<0)
 			return INVALID_ARGV;    			 
 	}else{
 		fprintf(stderr, "you must input correct argvs\n");   
-		fprintf(stderr, "expl: ./data/local/tmp/ddr_trans_table -t 60(s)\n");  
+		fprintf(stderr, "expl: ./data/power_tools/fps/fps -t  1(s)\n");  
 		return INVALID_ARGV; 
 	}
 	if(argv_time==0)
 		argv_time = DEFAULT_TIME;
+	*dis = argv_dis;
 	*accummulate_time = argv_time;
 	return 0;
 }
@@ -83,27 +99,34 @@ static int check_argv(char *tag, int *accummulate_time, char *value)
 int main(int argc, char *argv[])
 {
 	int accumulate_time = 0;
+	int dis = 0;
 	long int start_frame = 0;
 	float fps = 0.0;
 		if( argc < 1 ){  
         fprintf(stderr, "you must input at least one argv");   
-        fprintf(stderr, "expl: ./data/local/tmp/ddr_trans_table -t 60(s)\n");  
+        fprintf(stderr, "expl: ./data/power_tools/fps/fps -t  1(s)\n");  
         return INVALID_ARGV;  
     }  
 	if( argc%2!=1){
 		fprintf(stderr, "you must input odd number argvs");   
-		fprintf(stderr, "expl: ./data/local/tmp/ddr_trans_table -t 60(s)\n");  
+		fprintf(stderr, "expl: ./data/power_tools/fps/fps -t  1(s)\n");  
         return INVALID_ARGV;  
 	} 
 	
 	// input argc 1  
     if( argc==1){  
-		accumulate_time = DEFAULT_TIME;  				
+		accumulate_time = DEFAULT_TIME; 
+		dis				= DEFAULT_DIS;
     // input argc 3  or more 
     }else if(argc==3){
-		if(check_argv(argv[1], &accumulate_time, argv[2])<0)
+		if(check_argv(&dis, argv[1], &accumulate_time, argv[2])<0)
 			return INVALID_ARGV;
-    }
+    }else{
+		if(check_argv(&dis, argv[1], &accumulate_time, argv[2])<0)
+			return INVALID_ARGV;
+		if(check_argv(&dis, argv[3], &accumulate_time, argv[4])<0)
+			return INVALID_ARGV;
+	}
 	printf("accumulate_time is %d\n", accumulate_time);
 	
 	double fps_sum = 0.0;
@@ -111,7 +134,8 @@ int main(int argc, char *argv[])
 	
 	while(i<accumulate_time){
 		start_frame = cal_fps(start_frame, &fps);
-		printf("fps: %.2f\n", fps);
+		if(dis==1)
+			printf("fps: %.2f\n", fps);
 		fps_sum +=fps;
 		i++;
 	}
