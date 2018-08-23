@@ -43,7 +43,7 @@ static si check_argv(char *tag, si *accummulate_time, char *value)
 			return INVALID_ARGV;    			 
 	}else{
 		fprintf(stderr, "you must input correct argvs\n");   
-		fprintf(stderr, "expl: ./data/local/tmp/transformation -t 60(s)\n");  
+		fprintf(stderr, "expl: ./data/power_tools/cpu/cpu_trans_table/cpu_trans_table -t 60(s)\n");  
 		return INVALID_ARGV; 
 	}
 	if(argv_time==0)
@@ -242,12 +242,12 @@ int main(int argc, char *argv[])
     ui   cpu0_available_freq[MAX_AVALLABLE_FREQ], cpu4_available_freq[MAX_AVALLABLE_FREQ];  
 	if( argc < 1 ){  
         fprintf(stderr, "you must input at least one argv");   
-        fprintf(stderr, "expl: ./data/local/tmp/transformation -t 60(s)\n");  
+        fprintf(stderr, "expl: ./data/power_tools/cpu/cpu_trans_table/cpu_trans_table -t 60(s)\n");  
         return INVALID_ARGV;  
     }  
 	if( argc%2!=1){
 		fprintf(stderr, "you must input odd number argvs");   
-		fprintf(stderr, "expl: ./data/local/tmp/transformation -t 60(s)\n");  
+		fprintf(stderr, "expl: ./data/power_tools/cpu/cpu_trans_table/cpu_trans_table -t 60(s)\n");  
         return INVALID_ARGV;  
 	} 
 	
@@ -261,14 +261,14 @@ int main(int argc, char *argv[])
     }
 	printf("accumulate_time is %d\n", accumulate_time);
 	ulli counts = accumulate_time*1000/20;
-	printf("counts is %lld\n", counts);
+	//printf("counts is %lld\n", counts);
 	
 	processor_num = get_processor_num();
 	if(processor_num<=0){
 		printf("find cpu core num is not correct\n");
 		return ERROR;
 	}
-	printf("processor_num is %d\n", processor_num);
+	//printf("processor_num is %d\n", processor_num);
 
 	if(get_init_freq(CPU0_AVAILABLE_FREQ_PATH, &cpu0_size, cpu0_available_freq)<0)
 			return ERROR;
