@@ -8,6 +8,13 @@
 
 #include "ddr_loading.h"
 
+typedef signed      int    si;  
+typedef signed      char   s8;  
+typedef unsigned    char   u8;  
+typedef unsigned    int    ui;  
+typedef unsigned long int  uli;  
+typedef unsigned long long ulli;
+
 static si get_argv(char *time_char)  
 {  
     char *ch = time_char;  
