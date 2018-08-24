@@ -127,13 +127,13 @@ static si get_ddr_log(si accummulate_time)
 
 static int log_to_csv()
 {
-	char log_to_csv_sh[] = "/data/power_tools/ddr/ddr_bm/log_to_csv.sh";
+	char log_to_csv_sh[] = "/data/power_tools/ddr/ddr_bm/tool/log_to_csv.sh";
 	char axi_per_log[] = "/mnt/obb/axi_per_log";
-	char log_tool[] = "/data/power_tools/ddr/ddr_bm/ddr_bm_log";
+	char log_tool[] = "/data/power_tools/ddr/ddr_bm/tool/ddr_bm_log";
 	if(!access(log_to_csv_sh,F_OK)){
 		if(!access(axi_per_log,F_OK)){
 			if(!access(log_tool,F_OK)){
-				system("sh /data/power_tools/ddr/ddr_bm/log_to_csv.sh");
+				system("sh /data/power_tools/ddr/ddr_bm/tool/log_to_csv.sh");
 			}else{
 				fprintf(stderr, "there is no file %s\n", log_tool);
 				return -2;
@@ -155,12 +155,12 @@ int main(int argc, char *argv[])
 	si   accummulate_time = 0;
 	if( argc < 1 ){  
         fprintf(stderr, "you must input at least one argv");   
-        fprintf(stderr, "expl: ./data/power_tools/ddr/ddr_bm/ddr_bm -t 240(s) -d 1\n");  
+        fprintf(stderr, "expl: ./data/power_tools/ddr/ddr_bm/tool/ddr_bm -t 240(s) -d 1\n");  
         return INVALID_ARGV;  
     }  
 	if( argc%2!=1){
 		fprintf(stderr, "you must input odd number argvs");   
-		fprintf(stderr, "expl: ./data/power_tools/ddr/ddr_bm/ddr_bm -t 240(s) -d 1\n");  
+		fprintf(stderr, "expl: ./data/power_tools/ddr/ddr_bm/tool/ddr_bm -t 240(s) -d 1\n");  
         return INVALID_ARGV;  
 	} 
 	

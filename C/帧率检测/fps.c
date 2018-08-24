@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 	double fps_sum = 0.0;
 	int i = 0;
 	
-	while(i<accumulate_time){
+	while(i<accumulate_time*60){
 		start_frame = cal_fps(start_frame, &fps);
 		if(dis==1)
 			printf("fps: %.2f\n", fps);
