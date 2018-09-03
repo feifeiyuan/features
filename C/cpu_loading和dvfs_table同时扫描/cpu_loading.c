@@ -242,12 +242,165 @@ static double dis_result(u8 cpu_size, ui *cpu_available_freq_start, int start, i
 	return sum;
 }
 
-static int get_cpu_loading(si accummulate_time, si processor_num)
+// dvfs_table
+
+static int get_vdd_lit()
+{
+	char *file_path = NULL;
+	if(!access("/sys/kernel/debug/fan53555-reg/voltage",F_OK)){
+		file_path = "/sys/kernel/debug/fan53555-reg/voltage";
+	}else if(!access("/sys/kernel/debug/sprd-regulator/vddarm0/voltage",F_OK)){
+		file_path = "/sys/kernel/debug/sprd-regulator/vddarm0/voltage";
+	}else if(!access("/sys/kernel/debug/sprd-regulator/vddcpu/voltage",F_OK)){
+		file_path = "/sys/kernel/debug/sprd-regulator/vddcpu/voltage";
+	}else if(!access("/sys/kernel/debug/sprd-regulator/vddcore/voltage",F_OK)){
+		file_path = "/sys/kernel/debug/sprd-regulator/vddcore/voltage";
+	}else{
+		printf("we do not find correct path for GPU info\n");
+		return ERROR;
+	}
+	
+	int current_freq = 0;
+	FILE *fp = NULL;
+	fp = fopen(file_path, "r");
+	if(fp==NULL){
+		fprintf(stderr, "failed opend file:%s", file_path);  
+        return FAILED_OPEN_FILE;  
+	}
+	fscanf(fp,"%d", &current_freq);
+	printf("%d\n", current_freq);
+	fclose(fp);
+	return current_freq;
+}
+
+static int get_vdd_big()
+{
+	char *file_path = NULL;
+	if(!access("/sys/kernel/debug/sprd-regulator/vddarm1/voltage",F_OK)){
+		file_path = "/sys/kernel/debug/sprd-regulator/vddarm1/voltage";
+	}else if(!access("/sys/kernel/debug/sprd-regulator/vddcpu/voltage",F_OK)){
+		file_path = "/sys/kernel/debug/sprd-regulator/vddcpu/voltage";
+	}else{
+		printf("we do not find correct path for GPU info\n");
+		return ERROR;
+	}
+	
+	//printf("%s\n", file_path);
+	int current_freq = 0;
+	FILE *fp = NULL;
+	fp = fopen(file_path, "r");
+	if(fp==NULL){
+		fprintf(stderr, "failed opend file:%s", file_path);  
+        return FAILED_OPEN_FILE;  
+	}
+	fscanf(fp,"%d", &current_freq);
+	printf("%d\n", current_freq);
+	fclose(fp);
+	return current_freq;
+}
+
+static int write_node(int value, char *path)
+{
+	FILE *fp  = NULL;
+	fp = fopen(path, "w");
+	if(fp==NULL){
+		fprintf(stderr, "faile open the file %s\n", path);
+		return ERROR;
+	}
+	fprintf(fp, "%d", value);
+	printf("%d\t", value);
+	fclose(fp);
+	return 0;
+}
+
+static int switch_governor(char *path, char *governor)
+{
+	FILE *fp  = NULL;
+	fp = fopen(path, "w");
+	if(fp==NULL){
+		fprintf(stderr, "faile open the file %s\n", path);
+		return ERROR;
+	}
+	fprintf(fp, "%s", governor);
+	fclose(fp);
+	return 0;
+}
+
+static char * read_node_str(char *path)
+{
+	FILE *fp  = NULL;
+	char buffer[BUFFER_SIZE], *str;
+	fp = fopen(path, "r");
+	if(fp==NULL){
+		fprintf(stderr, "faile open the file %s\n", path);
+		return NULL;
+	}
+	fgets(buffer, BUFFER_SIZE, fp);
+	str = (char *)malloc(sizeof(buffer));
+	if(str==NULL){
+		fprintf(stderr, "%s there is no space\n", __func__);
+		return NULL;
+	}
+	memset(str, 0, sizeof(buffer));
+	strcat(str,buffer);
+	fclose(fp);
+	return str;
+}
+
+static int fix_freq_get_vdd(int cpu_size, int *cpu_available_freq, char *path, char *governor_path)
+{
+	int i = 0;
+	char *default_governor = NULL;
+	default_governor = read_node_str(governor_path);
+	switch_governor(governor_path, "userspace");
+	for(i=0; i<cpu_size; i++){
+		if(write_node(cpu_available_freq[i], path)){
+			return ERROR;
+		}
+		
+		if(strcmp(governor_path, LLT_GOVERNOR)==0){
+			if(get_vdd_lit()<0){
+				return ERROR;
+			}
+		}else{
+			if(get_vdd_big()<0){
+				return ERROR;
+			}
+		}
+	}
+	switch_governor(governor_path, default_governor);
+	return 0;
+}
+
+
+static int get_dvfs_table(si processor_num)
 {
 	u8   cpu0_size, cpu4_size;
+	ui   cpu0_available_freq[MAX_AVALLABLE_FREQ], cpu4_available_freq[MAX_AVALLABLE_FREQ];  
+	printf("dvfs_table\n");
+	if(get_init_freq_count(CPU0_AVAILABLE_FREQ_PATH, &cpu0_size, cpu0_available_freq)<0)
+		return ERROR;
+	printf("lit core:\n");
+	printf("/* kHz	uV */\n");
+	fix_freq_get_vdd(cpu0_size, cpu0_available_freq, CPU0_SET_FREQ_PATH, LLT_GOVERNOR);
+	
+	if(processor_num>LIT_CLUSTER_END){
+		if(get_init_freq_count(CPU4_AVAILABLE_FREQ_PATH, &cpu4_size, cpu4_available_freq)<0)
+			return ERROR;
+		printf("\nbig core:\n");
+		printf("/* kHz	uV */\n");
+		fix_freq_get_vdd(cpu4_size, cpu4_available_freq, CPU4_SET_FREQ_PATH, BIG_GOVERNOR);
+	}
+}
+
+
+static int get_cpu_loading(si processor_num, si accummulate_time)
+{
+	int  i  = 0;
+	u8   cpu0_size, cpu4_size;
 	ui   cpu0_available_freq_start[MAX_AVALLABLE_FREQ], cpu4_available_freq_start[MAX_AVALLABLE_FREQ];  
-	ui   cpu0_available_freq_end[MAX_AVALLABLE_FREQ], cpu4_available_freq_end[MAX_AVALLABLE_FREQ];
-	int  i = 0;
+	ui   cpu0_available_freq_end[MAX_AVALLABLE_FREQ], cpu4_available_freq_end[MAX_AVALLABLE_FREQ];  
+	
 	if(get_init_freq_count(POLICY0_TIME_STATS, &cpu0_size, cpu0_available_freq_start)<0){
 		return ERROR;
 	}
@@ -303,14 +456,13 @@ static int get_cpu_loading(si accummulate_time, si processor_num)
 		double sum_big = dis_result(cpu4_size, cpu4_available_freq_start, LIT_CLUSTER_END, processor_num, big_total_time, cpu_idle_state0_start);
 		printf("SUM:%.2f\n", sum_lit+sum_big);
 	}
-	return 0;
+	
 }
 
 int main(int argc, char *argv[])
 {
 	si   accummulate_time = 0;
 	si 	 processor_num = 0;
-	
 	
 	if(getuid()!=0){
 		fprintf(stderr, "You should download userdebug and su root Firstly\n");
@@ -340,6 +492,7 @@ int main(int argc, char *argv[])
 	if(processor_num<=0){
 		return ERROR;
 	}
-	if(get_cpu_loading(accummulate_time, processor_num)<0)
-		return ERROR;
+	
+	get_cpu_loading(processor_num, accummulate_time);
+	get_dvfs_table(processor_num);
 }
