@@ -1,0 +1,2 @@
+/sys/class/devfreq/5000000.qcom,kgsl-3d0/cur_freq
+/sys/class/devfreq/5000000.qcom,kgsl-3d0/available_frequencies

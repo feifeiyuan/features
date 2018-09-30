@@ -1,0 +1,1 @@
+python %cd%\setting\power_graph.py

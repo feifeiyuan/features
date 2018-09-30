@@ -1,0 +1,5 @@
+双击get_data.bat获取一段时间的freq信息
+
+双击show_graph可对抓取的数据批量处理并将结果存储在result.xlsx中
+
+如有问题，可致电3216
