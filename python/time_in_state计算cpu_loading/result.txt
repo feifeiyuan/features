@@ -1,0 +1,14 @@
+there is some wrong during openD:\工具\新建文件夹\features\python\time_in_state计算cpu_loading\tool\cpu_online_offline.txt
+there is some wrong during openD:\工具\新建文件夹\features\python\time_in_state计算cpu_loading\tool\cpu_freq_time_end.txt
+there is some wrong during openD:\工具\新建文件夹\features\python\time_in_state计算cpu_loading\tool\cpu_freq_time_start.txt
+there is some wrong during open D:\工具\新建文件夹\features\python\time_in_state计算cpu_loading\tool\cpu_idle_time_start.txt
+there is some wrong during open D:\工具\新建文件夹\features\python\time_in_state计算cpu_loading\tool\cpu_idle_time_end.txt
+
+SUM       0.00
+
+
+
+SUM       0.00
+
+
+TOTAL     0.00
